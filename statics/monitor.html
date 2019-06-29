@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+<body>
+<div id="app" style="width: 80%;margin:0 auto;">
+    <el-table
+            :data="tableData"
+            style="width: 100%">
+        <el-table-column
+                label="监控url">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.url" placeholder="要监控的url" :disabled="scope.row.switch"
+                          clearable></el-input>
+
+            </template>
+        </el-table-column>
+        <el-table-column
+                label="接收Email">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.email" placeholder="多个接收邮箱用半角,隔开" :disabled="scope.row.switch"
+                          clearable></el-input>
+            </template>
+        </el-table-column>
+        <el-table-column label="操作">
+            <template slot-scope="scope">
+                <el-switch style="margin-right: 20px"
+                           @change="submit"
+                           v-model="scope.row.switch"
+                           active-text="启用"
+                           inactive-text="停用">
+                </el-switch>
+
+                <el-button
+                        size="mini"
+                        type="danger"
+                        @click="handleDelete(scope.$index, scope.row)">删除
+                </el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <br>
+    <el-button type="primary" style="width: 100%" @click="addMonitor">添加监控</el-button>
+</div>
+</body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    new Vue({
+
+        el: '#app',
+        data: function () {
+            return {
+                tableData: []
+            }
+        },
+        mounted: function () {
+            this.get_table()
+        },
+        methods: {
+            get_table() {
+                axios.get('http://localhost:9999/monitor/')
+                    .then(response => {
+                        this.tableData = response.data.table
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            handleEdit(index, row) {
+                console.log(index, row);
+            },
+            handleDelete(index, row) {
+                console.log(index, row);
+                this.tableData.splice(index, 1)
+                this.submit()
+            },
+            addMonitor() {
+                this.tableData.push({
+                    url: null,
+                    email: null,
+                    switch: false
+                });
+            },
+            submit() {
+                // console.log(s)
+                axios.put('http://localhost:9999/monitor/', {
+                    table: this.tableData,
+                }).then(function (response) {
+                    console.log(response);
+                    if (response.data.result != 'ok'){
+                        alert(response.data.result)
+                    }
+                })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+        }
+    })
+</script>
+</html>
+
