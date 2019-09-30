@@ -95,7 +95,8 @@
                 }).then(function (response) {
                     console.log(response);
                     if (response.data.result != 'ok'){
-                        alert(response.data.result)
+                        alert(response.data.result);
+                        window.location.reload();
                     }
                 })
                     .catch(function (error) {
