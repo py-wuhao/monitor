@@ -13,7 +13,7 @@ class MonitorHandler(RequestHandler):
         table = json_decode(table_str)
         correct_table = {'table': []}
         for item in table.get('table'):
-            if validators.url(item.get('url')):
+            if validators.url(item.get('url')) and item.get('email'):
                 for e in item.get('email').split(','):
                     if not validators.email(e):
                         break
